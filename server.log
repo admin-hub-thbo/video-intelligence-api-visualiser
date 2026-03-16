@@ -1,0 +1,13 @@
+ * Serving Flask app 'run_video_intelligence'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:10000
+ * Running on http://192.168.0.2:10000
+[33mPress CTRL+C to quit[0m
+[youtube] Extracting URL: invalid-url
+[youtube] invalid-url: Downloading webpage
+WARNING: [youtube] No supported JavaScript runtime could be found. Only deno is enabled by default; to use another runtime add  --js-runtimes RUNTIME[:PATH]  to your command/config. YouTube extraction without a JS runtime has been deprecated, and some formats may be missing. See  https://github.com/yt-dlp/yt-dlp/wiki/EJS  for details on installing one
+[youtube] invalid-url: Downloading android vr player API JSON
+ERROR: [youtube] invalid-url: Video unavailable
+127.0.0.1 - - [16/Mar/2026 10:48:13] "[35m[1mPOST /process-url HTTP/1.1[0m" 500 -

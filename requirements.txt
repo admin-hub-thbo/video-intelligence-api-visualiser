@@ -3,3 +3,5 @@ google-cloud-videointelligence==2.11.2
 google-auth==2.29.0
 google-auth-oauthlib==1.2.0
 gunicorn==21.2.0
+yt-dlp
+google-cloud-storage==3.9.0
