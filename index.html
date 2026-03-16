@@ -88,6 +88,32 @@
             width: 250px;
         }
 
+        .url-input-area {
+            border: solid #ededed 3px;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px;
+        }
+
+        .url-input-area > input {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
         #upload-data>p {
             text-align: justify;
         }
@@ -166,6 +192,11 @@
 
     <div id="app" class="mdl-layout--fixed-header">
 
+        <div v-if="loading" class="loader-overlay">
+            <div class="mdl-spinner mdl-js-spinner is-active"></div>
+            <p>Processing video (this may take a few minutes)...</p>
+        </div>
+
         <header class="mdl-layout__header">
             <div class="mdl-layout-icon">
                 <img class="logo" src="assets/icon.png">
@@ -199,6 +230,15 @@
             <div class="upload-area" ondrop="drop_json(event)" ondragover="drag_enter(event)">
                 <p>Your .json</p>
                 <input id="json_input" type="file" accept="application/JSON" />
+            </div>
+
+            <div class="url-input-area">
+                <p>From URL (YouTube, TikTok, etc.)</p>
+                <input v-model="video_url" type="text" placeholder="https://..." />
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                    v-on:click="process_url">
+                    Process
+                </button>
             </div>
         </div>
 
@@ -323,6 +363,8 @@
                 video_info: { width: 800, height: 500, length: 252 },
                 video_length: 252,
                 current_view: 'Label Detection',
+                video_url: '',
+                loading: false,
                 title_ids_dict: {
                     'Label Detection': 'shot_label_annotations',
                     'Shot Detection': 'shot_annotations',
@@ -342,8 +384,36 @@
                 set_current_view: function (new_view) {
                     this.current_view = new_view
                     router.push({ hash: '#' + new_view })
+                },
+                process_url: function () {
+                    if (!this.video_url) {
+                        alert("Please enter a URL");
+                        return;
+                    }
+                    this.loading = true;
+                    const component = this;
+                    $.ajax({
+                        url: '/process-url',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ url: this.video_url }),
+                        success: function (data) {
+                            console.log("Processing complete", data);
 
+                            // Load the video
+                            load_video_from_url(data.public_video_url);
 
+                            // Load the JSON
+                            load_json_from_url(data.public_json_url);
+
+                            component.loading = false;
+                        },
+                        error: function (error) {
+                            console.error("Error processing URL", error);
+                            alert("Error processing URL: " + (error.responseJSON ? error.responseJSON.error : "Unknown error"));
+                            component.loading = false;
+                        }
+                    });
                 }
             },
             computed: {
